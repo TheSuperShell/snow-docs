@@ -1,8 +1,14 @@
 [project]
 name = "snow-docs"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "A simple CLI to quickly search for the Snowflake documentation references"
 readme = "README.md"
+license-files = ["LICENSE"]
+keywords = ["cli", "python", "snowflake", "documentation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3.12",
+]
 authors = [{ name = "Steven Rudenko", email = "srudenko@ncl.com" }]
 requires-python = ">=3.12"
 dependencies = [
@@ -11,6 +17,9 @@ dependencies = [
     "rich>=14.2.0",
     "typer>=0.20.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/TheSuperShell/snow-docs"
 
 [project.scripts]
 snow-docs = "snow_docs:app"
