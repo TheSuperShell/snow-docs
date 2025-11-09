@@ -1,6 +1,6 @@
 [project]
 name = "snow-docs"
-version = "1.0.0"
+version = "1.0.1"
 description = "A simple CLI to quickly search for the Snowflake documentation references"
 readme = "README.md"
 license-files = ["LICENSE"]
