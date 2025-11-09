@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 from bs4 import BeautifulSoup
 from typing import Annotated
 import rich
@@ -19,10 +20,22 @@ def open_main_documnetaion_page() -> None:
     typer.Exit()
 
 
+class LinkType(str, Enum):
+    doc = "Documentation"
+    knowledge_base = "Knowledge Base"
+
+
+class LinkTypeOptions(str, Enum):
+    doc = "doc"
+    knowledge_base = "k_base"
+    both = "both"
+
+
 @dataclass(frozen=True, slots=True)
 class Link:
     text: str
     link: str
+    link_type: LinkType
 
 
 @app.command("search", help="Search for a specific Snowflake topic")
@@ -30,6 +43,12 @@ def search(
     prompt: Annotated[
         list[str], typer.Argument(help="Search prompt to find the Snowflake topic")
     ],
+    filter: Annotated[
+        LinkTypeOptions,
+        typer.Option(
+            "-f", "--filter", help="filter out only specified type of documentation"
+        ),
+    ] = LinkTypeOptions.both,
 ) -> typer.Exit:
     prompt_text = " ".join(prompt)
     safe_prompt = quote_plus(prompt_text)
@@ -54,8 +73,16 @@ def search(
         if not isinstance(link_href, str):
             rich.print("[red bold]ERROR[/red bold]")
             return typer.Exit(1)
-        links.append(Link(link_text, link_href))
-        rich.print(f"{i + 1}. {link_text}")
+        link_type = link.find("div", {"class": "text-xs mt-1 text-green"})
+        if link_type is None:
+            rich.print("[red bold]ERROR[/red bold]")
+            return typer.Exit(1)
+        link_type = LinkType(link_type.get_text())
+        if filter != LinkTypeOptions.both and link_type.name != filter.name:
+            continue
+        links.append(Link(link_text, link_href, link_type))
+    for i, link in enumerate(links):
+        rich.print(f"{i + 1}. {link.text} -> [green]{link.link_type.value}[/green]")
     rich.print(f"{len(links) + 1}. Cancel")
     chosen_link = (
         int(
