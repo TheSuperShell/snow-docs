@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-pip install snow-docs
+pipx install snow-docs
 ```
 
 ## Usage
